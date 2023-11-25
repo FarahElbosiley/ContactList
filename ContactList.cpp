@@ -57,11 +57,18 @@ void Contact::getAddress (string address)
 }
 
 
-tree_node::tree_node() {
-    left = nullptr;
-    right = nullptr;
+ContactList::ContactList() {
+    root = nullptr; 
+    insertSize = 0; 
+    count = 0; 
 }
-tree_node::~tree_node() {
-    delete left;
-    delete right;
+ContactList::~ContactList() {
+    deleteTree(root);
+}
+void ContactList::deleteTree(link node) {
+    if (node != nullptr) {
+        deleteTree(node->left);  
+        deleteTree(node->right); 
+        delete node; 
+    }
 }
