@@ -55,3 +55,13 @@ void Contact::getAddress (string address)
 {
     address = address;
 }
+
+
+tree_node::tree_node() {
+    left = nullptr;
+    right = nullptr;
+}
+tree_node::~tree_node() {
+    delete left;
+    delete right;
+}

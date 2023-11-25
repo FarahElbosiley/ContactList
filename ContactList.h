@@ -33,7 +33,8 @@ typedef class tree_node* link;
 class tree_node
 {
 private:
-    tree_node ()   {};
+    tree_node();
+    ~tree_node();
     Contact data;             // item_type item
     link left;                  // tree_node *left; 
     link right;                 // tree_node *right; 
