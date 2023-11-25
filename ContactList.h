@@ -4,45 +4,37 @@
 #include <string>
 #include <iostream>
 
-class Name
-{
-public:
-    Name();
-    string first();
-    string last();
-    void setFirstName  (string firstname);
-    void setLastName   (string lastname);
-private:
-    string firstname;
-    string lastname;
-};
 
 class Contact
 {
 public:
     Contact ();
-    Contact (Name person, string phoneNum, string email);
-    void set (string firstname, string lastname, string phoneNum, string email);
-    void getName  (Name& fullname);
-    void getPhoneNum   (string& phoneNum);
-    void getEmail (string& email);
-    void setName  (string fullname);
-    void setPhoneNum   (string phoneNum);
+    Contact (string firstname,string lastname, string phoneNum, string email, string address);
+    string getFirstName  (string fname);
+    string getLastName  (string lname);
+    string getPhoneNum   (string phoneNumber);
+    string getEmail (string email);
+    string getAddress (string address);
+    void setFirstName  (string fname);
+    void setLastName  (string lname);
+    void setPhoneNum   (string phoneNumber);
     void setEmail (string email);
+    void setAddress (string address);
 
 private:
-    Name fullname;
+    string firstname;
+    string lastname;
     string phoneNum;
     string email;
+    string address;
 };
 
-typedef class tree_node* link;  // link aka (tree_node *)
+typedef class tree_node* link; 
 class tree_node
 {
 private:
     tree_node ()   {};
-    // Non-default constructor:
-    Contact record;             // item_type item
+    Contact data;             // item_type item
     link left;                  // tree_node *left; 
     link right;                 // tree_node *right; 
     friend class ContactList;   // provides functionality for private members
