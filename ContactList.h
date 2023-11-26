@@ -1,5 +1,7 @@
 #ifndef __CONTACTLIST_H__ 
 #define __CONTACTLIST_H__
+#ifndef NODE_H
+#define NODE_H
 
 #include <string>
 #include <iostream>
@@ -29,26 +31,30 @@ private:
     string address;
 };
 
-typedef class tree_node* link; 
-class tree_node
-{
-private:
-    tree_node();
-    ~tree_node();
-    Contact data;             // item_type item
-    link left;                  // tree_node *left; 
-    link right;                 // tree_node *right; 
-    friend class ContactList;   // provides functionality for private members
+typedef class Node* link;
+class Node {
+public:
+    string name;
+    string phoneNumber;
+    string email;
+    string address;
+    Node* left;
+    Node* right;
+
+    Node(string name, string phoneNumber, string email,string address) :
+        name(name), phoneNumber(phoneNumber), email(email), address(address), left(NULL), right(NULL) {}
 };
 
-typedef void (*display_tree)(link, ostream&);
 
 class ContactList
 {
 public:
     ContactList();
     ~ContactList();
+    void deleteTree(link node);
     int display(ostream& output);
+    void inOrder(link current, ostream& output);
+    void display_tree(Contact record, ostream& output);
     int insert(Contact newContact);
     int delete(Contact cont);
     int search(ostream& output, string fname);
@@ -61,5 +67,5 @@ private:
     int count;      // general count used for find and delete
 };
 
-
+#endif //NODE_H
 #endif  //__CONTACTLIST_H__
