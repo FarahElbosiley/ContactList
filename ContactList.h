@@ -57,8 +57,7 @@ public:
     void display_tree(Contact record, ostream& output);
     int insert(Contact newContact);
     int delete(Contact cont);
-    int search(ostream& output, string fname);
-    int search(ostream& output, string lname, string fname);
+    int Search(ostream& output, string lastname, string firstname);
     int edit(Contact existingContact);
 
 private:
