@@ -58,6 +58,7 @@ public:
     int insert(Contact newContact);
     int delete(Contact cont);
     int Search(ostream& output, string lastname, string firstname);
+    void find_Lastname_Firstname_InTree(ostream& output, link current, string lastname, string firstname);
     int edit(Contact existingContact);
 
 private:
