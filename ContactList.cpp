@@ -145,3 +145,70 @@ int ContactList::insert(Contact newContact) {
 }
 
 
+
+int ContactList::Search(ostream& output, string lastname, string firstname)
+{
+    count = 0;
+    find_Lastname_Firstname_InTree(output, root, lastname, firstname);
+    return count;
+}
+
+void ContactList::find_Lastname_Firstname_InTree(ostream& output, link current, string lastname, string firstname)
+{
+    if (NULL == current) {
+        return;         // contact is not found
+    }
+
+
+    // begin search
+    else {
+
+
+        // get current contact from the record
+        string firstname_Record, lastname_Record;
+        current->record.getFirstName(firstname_Record);
+        current->record.getLastName(lastname_Record);
+
+
+        // compare the last name with the last name from record
+        if (lastname < lastname_Record) {
+            // last name to find is less so, search on the left
+            find_Lastname_Firstname_InTree(output, current->left, lastname, firstname);
+        }
+        // compare the last name in record with the last name to find
+        else if (lastname > lastname_Record) {
+            // last name to find is greater so, search on the right
+            find_Lastname_Firstname_InTree(output, current->right, lastname, firstname);
+        }
+
+
+        // found the lastname
+        else {
+            // compare the first name in record with the first name 
+            if (firstname < firstname_Record) {
+                // last name to find is less so, search on the left
+                find_Lastname_Firstname_InTree(output, current->left, lastname, firstname);
+            }
+            // compare the first name in record with the first name
+            else if (firstname > firstname_Record) {
+                // first name to find is greater so, search on the right
+                find_Lastname_Firstname_InTree(output, current->right, lastname, firstname);
+            }
+
+
+            // found the lastname
+            // found the firstname
+            else {
+                string telephone;
+                current->record.getPhoneNum(telephone);
+                string email;
+                current->record.getEmail(email);
+                output << "The contact is found: " << endl;
+                cout << "Last name: " << lastname_Record << "First name: \t" << firstname_Record << endl;
+                cout<< "Telephone number: \t" << telephone << "Email: \t" << email << endl;
+                count++;
+            }
+        }
+    }
+}
+  
