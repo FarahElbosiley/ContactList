@@ -153,10 +153,10 @@ link ContactList::find_name_InTree(ostream& output, link current, string name)
         name_Record=current->data.getName();
 
         if (name < name_Record) {
-            find_name_InTree(output, current->left, name);
+            return find_name_InTree(output, current->left, name);
         }
         else if (name > name_Record) {
-            find_name_InTree(output, current->right, name);
+            return find_name_InTree(output, current->right, name);
         }
         else{
 
