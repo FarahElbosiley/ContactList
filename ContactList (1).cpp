@@ -142,8 +142,11 @@ void ContactList::displayContact(link current){
 
 link ContactList::find_name_InTree(ostream& output, link current, string name)
 {
-    if (NULL == current) {
+    if (current == NULL) {
         return NULL;
+    }
+    else if (current -> data.getName() == name){
+        return current;
     }
     else {
         string name_Record;
@@ -157,9 +160,8 @@ link ContactList::find_name_InTree(ostream& output, link current, string name)
         }
         else{
 
-                return current;
+                return NULL;
             }
-        }
     }
 }
 void ContactList::deleteContact1(ostream& output, string name) {
