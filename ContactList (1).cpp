@@ -125,23 +125,19 @@ int ContactList::insert(Contact newContact) {
 
 bool ContactList::Search(ostream& output, string name) {
     link foundNode = find_name_InTree(output,root, name);
-    if (foundNode != NULL) {
-        displayContact(foundNode);
-        return true;  // Contact found
-    } else {
+    if (foundNode == NULL) {
         output << "Contact not found." << endl;
-        return false;  // Contact not found
+        return false;
+         // Contact not found
+    } else {
+          displayContact(foundNode);
+        return true; // Contact found
         }}
 
 void ContactList::displayContact(link current){
-        if(current !=NULL){
         cout << "The contact is found: " << endl;
         cout << "Name: " << current->data.getName()<< endl;
         cout<< "Telephone number: " << current->data.getPhoneNum() <<"    "<< "Email: " << current->data.getEmail()<< endl;
-}
-else{
-    cout<<"Not Find";
-}
 }
 
 link ContactList::find_name_InTree(ostream& output, link current, string name)
