@@ -56,7 +56,7 @@ public:
     void deleteContact(Contact *root, string xname);
     int Search(ostream& output, string name);
     void find_name_InTree(ostream& output, link current, string name);
-    int edit(Contact existingContact);
+    int editContact(Contact *root, string name, Contact newContact);
 
 private:
     link root;      // pointer to root of tree

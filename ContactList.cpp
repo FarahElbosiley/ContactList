@@ -242,7 +242,7 @@ void ContactList:: deleteContact(Contact *root, string xname)
 }
 
 
-void inorder_traversal (Contact * root)
+void ContactList:: inorder_traversal (Contact * root)
 {
   if (root == NULL)
     return;
@@ -252,4 +252,10 @@ void inorder_traversal (Contact * root)
 
   inorder_traversal (root->right);
 
+}
+
+Contact ContactList:: editContact ( Contact *root, string name, Contact newContact)
+{
+    deleteContact (Contact *root, string name);
+    insert (Contact newContact);
 }
