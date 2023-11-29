@@ -77,7 +77,11 @@ void ContactList::inOrder(link current, ostream& output)
     {
         inOrder(current->left, output);
         displayContact(current);
+    }
+     if(current != NULL)
+    {
         inOrder(current->right, output);
+        displayContact(current);
     }
 }
 
@@ -135,9 +139,14 @@ bool ContactList::Search(ostream& output, string name) {
         }}
 
 void ContactList::displayContact(link current){
+    if (current == NULL){
+        cout <<"Contact not Found"<<endl;
+    }
+    else {
         cout << "The contact is found: " << endl;
         cout << "Name: " << current->data.getName()<< endl;
         cout<< "Telephone number: " << current->data.getPhoneNum() <<"    "<< "Email: " << current->data.getEmail()<< endl;
+    }
 }
 
 link ContactList::find_name_InTree(ostream& output, link current, string name)
@@ -196,6 +205,7 @@ void ContactList::deleteContact(ostream& output,link root, string xname)
 
       root->data.getName() = temp->data.getName();
       link temp2 = root->left;
+        
     while(temp2->right != NULL){
        temp2=temp2->right;
     }}
