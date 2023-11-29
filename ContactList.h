@@ -11,21 +11,18 @@ class Contact
 {
 public:
     Contact ();
-    Contact (string firstname,string lastname, string phoneNum, string email, string address);
-    string getFirstName  (string fname);
-    string getLastName  (string lname);
+    Contact (string name, string phoneNum, string email, string address);
+    string getName  (string name);
     string getPhoneNum   (string phoneNumber);
     string getEmail (string email);
     string getAddress (string address);
-    void setFirstName  (string fname);
-    void setLastName  (string lname);
+    void setName  (string name);
     void setPhoneNum   (string phoneNumber);
     void setEmail (string email);
     void setAddress (string address);
 
 private:
-    string firstname;
-    string lastname;
+    string name;
     string phoneNum;
     string email;
     string address;
@@ -56,9 +53,9 @@ public:
     void inOrder(link current, ostream& output);
     void display_tree(Contact record, ostream& output);
     int insert(Contact newContact);
-    int delete(Contact cont);
-    int Search(ostream& output, string lastname, string firstname);
-    void find_Lastname_Firstname_InTree(ostream& output, link current, string lastname, string firstname);
+    void deleteContact(Contact *root, string xname);
+    int Search(ostream& output, string name);
+    void find_name_InTree(ostream& output, link current, string name);
     int edit(Contact existingContact);
 
 private:

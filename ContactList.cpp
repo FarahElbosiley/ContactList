@@ -5,23 +5,19 @@ using namespace std;
 
 Contact::Contact (){ }
 
-Contact::Contact (string firstname,string lastname, string phoneNum, string email, string address)
+Contact::Contact (string name, string phoneNum, string email, string address)
 {
-    firstname = firstname;
-    lastname = lastname
+    name = name;
     phoneNum = phoneNum;
     email = email;
     address = address;
 }
 
-string Contact::getFirstName (string fname)
+string Contact::getName (string name)
 {
-    return firstname;
+    return name;
 }
-string Contact::getLasttName (string lname)
-{
-    return lastname;
-}
+
 string Contact::getPhoneNum  (string PhoneNumber)
 {
     return phoneNum;
@@ -35,13 +31,9 @@ string Contact::getAddress (string address)
     return address;
 }
 
-void Contact::setFirstName  (string fname)
+void Contact::setName  (string name)
 {
-    firstname = fname;
-}
-void Contact::setLastName  (string lname)
-{
-    lastname = lname;
+    name = name;
 }
 void Contact::setPhoneNum (string phoneNumber) 
 {
@@ -91,26 +83,20 @@ void ContactList::inOrder(link current, ostream& output)
 
 void ContactList::display_tree(Contact record, ostream& output)
 {
-    string lastnameInRecord, firstnameInRecord, telephone, email;
-    record.getFirstName(firstInRecord);
-    record.getLastName(lastInRecord);
+    string nameInRecord, telephone, email;
+    record.getName(nameInRecord);
     record.getPhoneNum(telephone);
     record.getEmail(email);
     record.getAddress(address);
-    output << firstnameInRecord << "\t"<< lastnameInRecord << "\t" << telephone << "\t" << email << "\t" << address << endl;
+    output << nameInRecord << "\t"<< telephone << "\t" << email << "\t" << address << endl;
 }
 
 int ContactList::insert(Contact newContact) {
     // Create a new tree_node
-    link newNode = new Node;
+    link newNode = new Node(newContact);
     if (newNode == NULL) { // Check if new node is created successfully
         return -1; // Return -1 to indicate error
     }
-
-    // Set the data of the new node
-    newNode->data = newContact;
-    newNode->left = NULL;
-    newNode->right = NULL;
 
     // If the tree is empty, set the new node as the root
     if (root == NULL) {
@@ -123,19 +109,19 @@ int ContactList::insert(Contact newContact) {
     link parent = NULL;
     while (current != NULL) {
         parent = current;
-        if (newContact.getLastName() < current->data.getLastName()) {
+        if (newContact.getName() < current->data.getName()) {
             current = current->left;
-        } else if (newContact.getLastName() > current->data.getLastName()) {
+        } else if (newContact.getName() > current->data.getName()) {
             current = current->right;
         } else {
-            // If a contact with the same last name already exists, do not insert
+            // If a contact with the same  name already exists, do not insert
             delete newNode;
             return 0; // Return 0 to indicate that no new contact was inserted
         }
     }
 
     // Insert the new node as a child of the parent node
-    if (newContact.getLastName() < parent->data.getLastName()) {
+    if (newContact.getName() < parent->data.getName()) {
         parent->left = newNode;
     } else {
         parent->right = newNode;
@@ -146,14 +132,14 @@ int ContactList::insert(Contact newContact) {
 
 
 
-int ContactList::Search(ostream& output, string lastname, string firstname)
+int ContactList::Search(ostream& output, string name)
 {
     count = 0;
-    find_Lastname_Firstname_InTree(output, root, lastname, firstname);
+    find_name_InTree(output, root, name);
     return count;
 }
 
-void ContactList::find_Lastname_Firstname_InTree(ostream& output, link current, string lastname, string firstname)
+void ContactList::find_name_InTree(ostream& output, link current, string name)
 {
     if (NULL == current) {
         return;         // contact is not found
@@ -165,46 +151,44 @@ void ContactList::find_Lastname_Firstname_InTree(ostream& output, link current, 
 
 
         // get current contact from the record
-        string firstname_Record, lastname_Record;
-        current->record.getFirstName(firstname_Record);
-        current->record.getLastName(lastname_Record);
+        string name_Record;
+        current->record.getName(name_Record);
 
 
-        // compare the last name with the last name from record
-        if (lastname < lastname_Record) {
-            // last name to find is less so, search on the left
-            find_Lastname_Firstname_InTree(output, current->left, lastname, firstname);
+        // compare the name with the name from record
+        if (name < name_Record) {
+            // name to find is less so, search on the left
+            find_name_InTree(output, current->left, name);
         }
-        // compare the last name in record with the last name to find
-        else if (lastname > lastname_Record) {
-            // last name to find is greater so, search on the right
-            find_Lastname_Firstname_InTree(output, current->right, lastname, firstname);
+        // compare the name in record with the name to find
+        else if (name > name_Record) {
+            // name to find is greater so, search on the right
+            find_name_InTree(output, current->right, name);
         }
 
 
-        // found the lastname
+        // found the name
         else {
-            // compare the first name in record with the first name 
-            if (firstname < firstname_Record) {
-                // last name to find is less so, search on the left
-                find_Lastname_Firstname_InTree(output, current->left, lastname, firstname);
+            // compare the name in record with the name 
+            if (name < name_Record) {
+                //  name to find is less so, search on the left
+                find_name_InTree(output, current->left, name);
             }
-            // compare the first name in record with the first name
-            else if (firstname > firstname_Record) {
-                // first name to find is greater so, search on the right
-                find_Lastname_Firstname_InTree(output, current->right, lastname, firstname);
+            // compare the name in record with the name
+            else if (name > name_Record) {
+                // name to find is greater so, search on the right
+                find_name_InTree(output, current->right, name);
             }
 
 
-            // found the lastname
-            // found the firstname
+            // found the name
             else {
                 string telephone;
                 current->record.getPhoneNum(telephone);
                 string email;
                 current->record.getEmail(email);
                 output << "The contact is found: " << endl;
-                cout << "Last name: " << lastname_Record << "First name: \t" << firstname_Record << endl;
+                cout << "Name: " << name_Record << endl;
                 cout<< "Telephone number: \t" << telephone << "Email: \t" << email << endl;
                 count++;
             }
@@ -212,3 +196,60 @@ void ContactList::find_Lastname_Firstname_InTree(ostream& output, link current, 
     }
 }
   
+void ContactList:: deleteContact(Contact *root, string xname)
+{
+  if (root == NULL)
+  {
+    cout << "Node not found "<<endl;
+    return NULL;
+  }
+
+  if (root->name > xname)
+  {
+    root->left = deleteContact(root->left, xname);
+  }
+  else if (root->name < xname)
+  {
+    root->right = deleteContact(root->right, xname);
+  }
+  else
+  {
+    if (root->left == NULL)
+    {
+      Contact *temp = root->right;
+      delete (root);
+      return temp;
+    }
+    else if (root->right == NULL)
+    {
+      Contact *temp = root->left;
+      delete (root);
+      return temp;
+    }
+    else
+    {
+      Contact *temp = root->right;
+
+      while (temp->left != NULL)
+        temp = temp->left;
+
+      root->name = temp->name;
+
+      root->right = deleteContact(root->right, temp->name);
+    }
+  }
+  return root;
+}
+
+
+void inorder_traversal (Contact * root)
+{
+  if (root == NULL)
+    return;
+  inorder_traversal (root->left);
+
+  cout << root->name << " ";
+
+  inorder_traversal (root->right);
+
+}
