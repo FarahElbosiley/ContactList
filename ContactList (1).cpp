@@ -130,7 +130,7 @@ bool ContactList::Search(ostream& output, string name) {
         return true;  // Contact found
     } else {
         output << "Contact not found." << endl;
-        return false;  // Contact not found
+        return false;  // Contact notÂ found
         }}
 
 void ContactList::displayContact(link current){
@@ -159,18 +159,7 @@ link ContactList::find_name_InTree(ostream& output, link current, string name)
         else if (name > name_Record) {
             find_name_InTree(output, current->right, name);
         }
-        // found the name
-        else {
-            // compare the name in record with the name
-            if (name < name_Record) {
-                //  name to find is less so, search on the left
-                find_name_InTree(output, current->left, name);
-            }
-            // compare the name in record with the name
-            else if (name > name_Record) {
-                // name to find is greater so, search on the right
-                find_name_InTree(output, current->right, name);
-            }else{
+        else{
 
                 return current;
             }
@@ -246,7 +235,7 @@ int main(ostream& output){
                 cin >> name;
                 cout << "Enter contact number: ";
                 cin >> number;
-                cout << "Enter contact email ";
+                cout << "Enter contact email: ";
                 cin >> email;
                 cout << "Enter contact address: ";
                 cin >> address;
