@@ -1,5 +1,5 @@
-#include "ContactList.h"
 #include <string>
+#include "ContactList.h"
 #include <iostream>
 using namespace std;
 
@@ -12,6 +12,9 @@ Contact::Contact (string name, string phoneNum, string email, string address)
     this->email = email;
     this->address = address;
 }
+
+Contact::Contact(const Contact& other)
+    : name(other.name), phoneNum(other.phoneNum), email(other.email), address(other.address) {}
 
 string Contact::getName()
 {
@@ -207,13 +210,38 @@ void ContactList::deleteContact(ostream& output, link& root, string xname)
     }
 }
 
+void ContactList::editContact1(ostream& output, string name) {
 
-void ContactList:: editContact (ostream& output, link root, string name, Contact newContact)
-{
-    deleteContact (output, root,  name);
-    insert (newContact);
+    editContact(output, root, name);
 }
 
+void ContactList:: editContact (ostream& output, link root, string name)
+{
+     link ptr=find_name_InTree( output, root, name);
+     string data;
+     int choice;
+     output<<"Select Option to eddit 1 for name 2 for email and 3 for address and 4 for number:";
+     cin>>choice;
+    output<<"enter data to modify";
+    cin>>data;
+
+    switch(choice){
+    case 1:{
+    ptr->data.setName(data);
+    break;
+    }
+    case 2:{
+    ptr->data.setEmail(data);
+    break;}
+    case 3:{
+    ptr->data.setAddress(data);
+        break;}
+        case 4:{
+        ptr->data.setPhoneNum(data);
+         break;
+        }}
+
+    }
 
 int main(ostream& output){
     cout<<"Hello, Welcome to Contact list"<<endl;
@@ -226,9 +254,10 @@ int main(ostream& output){
         cout << "1. Insert new contact\n";
         cout << "2. Search for contact by name\n";
         cout << "3. Display contactList\n";
-        cout<<  "4. Display information of contact\n";
+        cout << "4. Display information of contact\n";
         cout << "5. Delete contact\n";
-        cout << "6. Exit\n";
+        cout << "6. Edit contact information\n";
+        cout << "7. Exit\n";
         cin >> choice;
 
         switch (choice) {
@@ -266,8 +295,13 @@ int main(ostream& output){
                 myContacts.deleteContact1(output,name);
                 break;
                 }
+            case 6:{
+                cout << "Enter contact name to edit: ";
+                cin >> name;
+                myContacts.editContact1(output,name);
+            }
 
-            case 6:
+            case 7:
                 return 0;
             default:
                 cout << "Invalid choice. Please try again.\n";
