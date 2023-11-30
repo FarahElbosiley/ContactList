@@ -1,25 +1,26 @@
-#ifndef __CONTACTLIST_H__ 
+#ifndef __CONTACTLIST_H__
 #define __CONTACTLIST_H__
 #ifndef NODE_H
 #define NODE_H
 
 #include <string>
 #include <iostream>
-
+using namespace std;
 
 class Contact
 {
 public:
     Contact ();
     Contact (string name, string phoneNum, string email, string address);
-    string getName  (string name);
-    string getPhoneNum   (string phoneNumber);
-    string getEmail (string email);
-    string getAddress (string address);
+    string getName();
+    string getPhoneNum();
+    string getEmail();
+    string getAddress();
     void setName  (string name);
     void setPhoneNum   (string phoneNumber);
     void setEmail (string email);
     void setAddress (string address);
+    Contact(const Contact& other);
 
 private:
     string name;
@@ -28,20 +29,17 @@ private:
     string address;
 };
 
-typedef class Node* link;
 class Node {
 public:
-    string name;
-    string phoneNumber;
-    string email;
-    string address;
+
+    Contact data;
     Node* left;
     Node* right;
 
-    Node(string name, string phoneNumber, string email,string address) :
-        name(name), phoneNumber(phoneNumber), email(email), address(address), left(NULL), right(NULL) {}
+    Node (Contact item) : data(item), left(NULL), right(NULL){}
 };
 
+typedef  Node* link;
 
 class ContactList
 {
@@ -51,13 +49,14 @@ public:
     void deleteTree(link node);
     int display(ostream& output);
     void inOrder(link current, ostream& output);
-    void display_tree(Contact record, ostream& output);
     int insert(Contact newContact);
-    void deleteContact(Contact *root, string xname);
-    int Search(ostream& output, string name);
-    void find_name_InTree(ostream& output, link current, string name);
-    int editContact(Contact *root, string name, Contact newContact);
-
+    void deleteContact(ostream& output,link &root, string xname);
+    bool Search(ostream& output, string name);
+    link find_name_InTree(ostream& output, link current, string name);
+    void editContact(ostream& output,link root, string name);
+    void editContact1(ostream& output, string name);
+    void displayContact(link current);
+    void deleteContact1(ostream& output, string name);
 private:
     link root;      // pointer to root of tree
     int insertSize; // list size
