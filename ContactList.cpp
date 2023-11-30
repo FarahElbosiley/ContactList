@@ -1,5 +1,5 @@
-#include "ContactList.h"
 #include <string>
+#include "ContactList.h"
 #include <iostream>
 using namespace std;
 
@@ -172,11 +172,11 @@ void ContactList::deleteContact1(ostream& output, string name) {
     deleteContact(output, root, name);
 }
 
-void ContactList::deleteContact(ostream& output, link& root, string xname)
+link ContactList::deleteContact(ostream& output, link& root, string xname)
 {
     if(root == NULL){
         output << "Contact not found!";
-        return;
+        return root;
     }
     else if(xname < root->data.getName()){
         deleteContact(output, root->left, xname);
@@ -185,7 +185,6 @@ void ContactList::deleteContact(ostream& output, link& root, string xname)
         deleteContact(output, root->right, xname);
     }
     else{
-        // node with only one child or no child
         if(root->left == NULL){
             link temp = root->right;
             delete root;
@@ -196,48 +195,62 @@ void ContactList::deleteContact(ostream& output, link& root, string xname)
             delete root;
             root = temp;
         }
-        else{
-            // node with two children: get the inorder
-            // successor (smallest in the right subtree)
-            link temp = find_name_InTree(output, root->right, xname);
+        else
+    {
+      link temp = root->right;
 
-            // copy the inorder successor's content to this node
-            root->data = temp->data;
+      while (temp->left != NULL)
+        temp = temp->left;
 
-            // delete the inorder successor
-            deleteContact(output, root->right, temp->data.getName());
-        }
+      root->data = temp->data;
+
+      root->right = deleteContact(output,root->right,temp->data.getName());
     }
+  }
+  return root;
 }
 
 void ContactList::editContact1(ostream& output, string name) {
+
     editContact(output, root, name);
 }
 
-void ContactList:: editContact (ostream& output, link root, string name,int choice,string data)
+void ContactList:: editContact (ostream& output, link root, string name)
 {
-    
-    link ptr=find_name_InTree( output, root, name);
-    switch(choice)
+     link ptr=find_name_InTree( output, root, name);
+     string data;
+     int choice;
+     output<<"Select Option to eddit 1 for name 2 for email and 3 for address and 4 for number:";
+     cin>>choice;
+    output<<"enter data to modify";
+    cin>>data;
+
+    switch(choice){
     case 1:{
     ptr->data.setName(data);
-    break;}
+    break;
+    }
     case 2:{
     ptr->data.setEmail(data);
     break;}
     case 3:{
-    ptr->data.setAddress(data);
-        break;}
-        case 4:{
+        ptr->data.setAddress(data);
+    break;}
+    case 4:{
         ptr->data.setPhoneNum(data);
-         break;
+    break;
         }
-
+        default: {
+            output<<"error";
+            return;
+        }
     }
-int main(ostream& output){
-    cout<<"Hello, Welcome to Contact list"<<endl;
+    }
+
+int main() {
+    cout << "Hello, Welcome to Contact list" << endl;
     ContactList myContacts;
-    string name, number,email,address;
+    string name, number, email, address;
     int choice;
 
     while (true) {
@@ -252,7 +265,7 @@ int main(ostream& output){
         cin >> choice;
 
         switch (choice) {
-            case 1:{
+            case 1: {
                 cout << "Enter contact name: ";
                 cin >> name;
                 cout << "Enter contact number: ";
@@ -261,43 +274,45 @@ int main(ostream& output){
                 cin >> email;
                 cout << "Enter contact address: ";
                 cin >> address;
-                Contact h(name,number,email,address);
+                Contact h(name, number, email, address);
                 myContacts.insert(h);
-                break;}
-            case 2:{
+                break;
+            }
+            case 2: {
                 cout << "Enter contact name to search: ";
                 cin >> name;
-                myContacts.Search(output,name);
-
-                break;}
-            case 3:{
-                myContacts.display(output);
-                break;}
-            case 4:{
+                myContacts.Search(cout, name);
+                break;
+            }
+            case 3: {
+                myContacts.display(cout);
+                break;
+            }
+            case 4: {
                 cout << "Enter contact name to display information: ";
                 cin >> name;
-                myContacts.Search(output,name);
-
+                myContacts.Search(cout, name);
                 break;
-                }
-            case 5:{
+            }
+            case 5: {
                 cout << "Enter contact name to delete: ";
                 cin >> name;
-                myContacts.deleteContact1(output,name);
+                myContacts.deleteContact1(cout, name);
                 break;
-                }
-            case 6:{
+            }
+            case 6: {
                 cout << "Enter contact name to edit: ";
                 cin >> name;
-                myContacts.editContact1(output,name);
+                myContacts.editContact1(cout, name);
+                break;
             }
-
             case 7:
                 return 0;
+
             default:
                 cout << "Invalid choice. Please try again.\n";
         }
     }
 
     return 0;
-};
+}
