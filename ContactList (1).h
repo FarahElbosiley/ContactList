@@ -20,6 +20,7 @@ public:
     void setPhoneNum   (string phoneNumber);
     void setEmail (string email);
     void setAddress (string address);
+    Contact(const Contact& other);
 
 private:
     string name;
@@ -52,7 +53,8 @@ public:
     void deleteContact(ostream& output,link &root, string xname);
     bool Search(ostream& output, string name);
     link find_name_InTree(ostream& output, link current, string name);
-    void editContact(ostream& output,link root, string name, Contact newContact);
+    void editContact(ostream& output, link root, string name);
+    void editContact1(ostream& output, string name);
     void displayContact(link current);
     void deleteContact1(ostream& output, string name);
 private:
