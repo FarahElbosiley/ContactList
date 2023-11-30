@@ -71,17 +71,14 @@ int ContactList::display(ostream& output)
     return insertSize;
 }
 
+
 void ContactList::inOrder(link current, ostream& output)
 {
     if(current != NULL)
     {
         inOrder(current->left, output);
         displayContact(current);
-    }
-     if(current != NULL)
-    {
         inOrder(current->right, output);
-        displayContact(current);
     }
 }
 
@@ -135,18 +132,13 @@ bool ContactList::Search(ostream& output, string name) {
          // Contact not found
     } else {
           displayContact(foundNode);
-        return true; // Contact found
+        return true; // Contact found
         }}
 
 void ContactList::displayContact(link current){
-    if (current == NULL){
-        cout <<"Contact not Found"<<endl;
-    }
-    else {
         cout << "The contact is found: " << endl;
         cout << "Name: " << current->data.getName()<< endl;
         cout<< "Telephone number: " << current->data.getPhoneNum() <<"    "<< "Email: " << current->data.getEmail()<< endl;
-    }
 }
 
 link ContactList::find_name_InTree(ostream& output, link current, string name)
@@ -177,40 +169,42 @@ void ContactList::deleteContact1(ostream& output, string name) {
     deleteContact(output, root, name);
 }
 
-void ContactList::deleteContact(ostream& output,link root, string xname)
+void ContactList::deleteContact(ostream& output, link& root, string xname)
 {
-  if(!(find_name_InTree(output, root, xname))){
-    output<<"not find!";
-  }
-  else
-  {
-    if (root->left == NULL)
-    {
-      link temp = root->right;
-      delete (root);
-      return ;
+    if(root == NULL){
+        output << "Contact not found!";
+        return;
     }
-    else if (root->right == NULL)
-    {
-      link temp = root->left;
-      delete (root);
-      return ;
+    else if(xname < root->data.getName()){
+        deleteContact(output, root->left, xname);
     }
-    else
-    {
-      link temp = root->right;
+    else if(xname > root->data.getName()){
+        deleteContact(output, root->right, xname);
+    }
+    else{
+        // node with only one child or no child
+        if(root->left == NULL){
+            link temp = root->right;
+            delete root;
+            root = temp;
+        }
+        else if(root->right == NULL){
+            link temp = root->left;
+            delete root;
+            root = temp;
+        }
+        else{
+            // node with two children: get the inorder
+            // successor (smallest in the right subtree)
+            link temp = find_name_InTree(output, root->right, xname);
 
-      while (temp->left != NULL)
-        temp = temp->left;
+            // copy the inorder successor's content to this node
+            root->data = temp->data;
 
-      root->data.getName() = temp->data.getName();
-      link temp2 = root->left;
-        
-    while(temp2->right != NULL){
-       temp2=temp2->right;
-    }}
-  }
-  return ;
+            // delete the inorder successor
+            deleteContact(output, root->right, temp->data.getName());
+        }
+    }
 }
 
 
