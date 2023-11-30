@@ -211,6 +211,9 @@ void ContactList::editContact1(ostream& output, string name) {
 void ContactList:: editContact (ostream& output, link root, string name)
 {
      link ptr=find_name_InTree( output, root, name);
+     if (ptr==NULL)
+     return;
+     else{
      string data;
      int choice;
      output<<"Select Option to eddit 1 for name 2 for email and 3 for address and 4 for number:";
@@ -237,7 +240,7 @@ void ContactList:: editContact (ostream& output, link root, string name)
             output<<"error";
             return;
         }
-    }
+    }}
     }
 
 int main() {
