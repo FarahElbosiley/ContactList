@@ -213,52 +213,26 @@ void ContactList::editContact1(ostream& output, string name) {
     editContact(output, root, name);
 }
 
-void ContactList::editContact(ostream& output, link root, string name) {
-    link ptr = find_name_InTree(output, root, name);
-    Contact temp ;
-    temp = Contact(ptr -> data);
-    string newname, number, email, address;
-    int choice;
-    cout << "Please choose what to edit:\n";
-    cout << "1. Name \n";
-    cout << "2. Number\n";
-    cout << "3. Email\n";
-    cout << "4. Adress\n";
-    cin >> choice;
-    switch (choice) {
-        case 1: {
-            cout << "Please enter the new name:\n";
-            cin >> newname;
-            temp.setName(newname);
-            break;
+void ContactList:: editContact (ostream& output, link root, string name,int choice,string data)
+{
+    
+    link ptr=find_name_InTree( output, root, name);
+    switch(choice)
+    case 1:{
+    ptr->data.setName(data);
+    break;}
+    case 2:{
+    ptr->data.setEmail(data);
+    break;}
+    case 3:{
+    ptr->data.setAddress(data);
+        break;}
+        case 4:{
+        ptr->data.setPhoneNum(data);
+         break;
         }
-        case 2: {
-            cout << "Please enter the new phone number:\n";
-            cin >> number;
-            temp.setPhoneNum(number);
-            break;
-        }
-        case 3: {
-            cout << "Please enter the new email:\n";
-            cin >> email;
-            temp.setEmail(email);
-            break;
-        }
-        case 4: {
-            cout << "Please enter the new address:\n";
-            cin >> address;
-            temp.setAddress(address);
-            break;
-        }
-        default:
-            cout << "Invalid choice. Please try again.\n";
-    }
-    deleteContact(output, root, name);
-    insert(temp);
-    ptr = nullptr;
-    delete ptr;
-}
 
+    }
 int main(ostream& output){
     cout<<"Hello, Welcome to Contact list"<<endl;
     ContactList myContacts;
