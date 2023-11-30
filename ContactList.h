@@ -50,10 +50,10 @@ public:
     int display(ostream& output);
     void inOrder(link current, ostream& output);
     int insert(Contact newContact);
-    void deleteContact(ostream& output,link &root, string xname);
+    link deleteContact(ostream& output,link &root, string xname);
     bool Search(ostream& output, string name);
     link find_name_InTree(ostream& output, link current, string name);
-    void editContact(ostream& output,link root, string name,int choice ,string data);
+    void editContact(ostream& output, link root, string name);
     void editContact1(ostream& output, string name);
     void displayContact(link current);
     void deleteContact1(ostream& output, string name);
