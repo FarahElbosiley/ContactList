@@ -49,7 +49,7 @@ public:
     int display(ostream& output);
     void inOrder(link current, ostream& output);
     int insert(Contact newContact);
-    void deleteContact(ostream& output,link root, string xname);
+    void deleteContact(ostream& output,link &root, string xname);
     bool Search(ostream& output, string name);
     link find_name_InTree(ostream& output, link current, string name);
     void editContact(ostream& output,link root, string name, Contact newContact);
