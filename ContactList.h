@@ -53,7 +53,7 @@ public:
     void deleteContact(ostream& output,link &root, string xname);
     bool Search(ostream& output, string name);
     link find_name_InTree(ostream& output, link current, string name);
-    void editContact(ostream& output,link root, string name);
+    void editContact(ostream& output,link root, string name,int choice ,string data);
     void editContact1(ostream& output, string name);
     void displayContact(link current);
     void deleteContact1(ostream& output, string name);
