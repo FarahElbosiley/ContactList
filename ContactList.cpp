@@ -1,4 +1,9 @@
-#include <string>
+// Online C++ compiler to run C++ program online
+#include <iostream>
+
+int main() {
+    // Write C++ code here
+    std:#include <string>
 #include "ContactList.h"
 #include <iostream>
 using namespace std;
@@ -121,7 +126,7 @@ int ContactList::insert(Contact newContact) {
     } else {
         parent->right = newNode;
     }
-
+      insertSize++;
     return 1; // Return 1 to indicate success
 }
 
@@ -168,6 +173,16 @@ link ContactList::find_name_InTree(ostream& output, link current, string name)
             }
     }
 }
+bool ContactList::isValidSize() {
+    return insertSize == countNodes(root);
+}
+int ContactList::countNodes(link node) {
+    if (node == NULL) {
+        return 0;
+    }
+    return 1 + countNodes(node->left) + countNodes(node->right);
+}
+
 void ContactList::deleteContact1(ostream& output, string name) {
     deleteContact(output, root, name);
 }
@@ -207,6 +222,7 @@ link ContactList::deleteContact(ostream& output, link& root, string xname)
       root->right = deleteContact(output,root->right,temp->data.getName());
     }
   }
+  insertSize--;
   return root;
 }
 
@@ -246,6 +262,8 @@ void ContactList:: editContact (ostream& output, link root, string name)
         }
     }
     }
+    
+    
 bool ContactList::isValidPhoneNumber(string phoneNumber) {
     // Check if the phone number starts with "+20" 
     if (phoneNumber.substr(0, 3) == "+20") {
@@ -299,28 +317,32 @@ int main() {
         cout << "6. Edit contact information\n";
         cout << "7. Exit\n";
         cin >> choice;
+        cin.ignore();
 
         switch (choice) {
             case 1: {
                 cout << "Enter contact name: ";
-                cin >> name;
+                getline(cin, name);
                 cout << "Enter contact number: ";
-                cin >> number;
+                getline(cin, number);
                 if(!myContacts.isValidPhoneNumber(number)){
                     cout<<"wrong number format"<<endl;
                     break;
                 }
                 cout << "Enter contact email: ";
-                cin >> email;
+                getline(cin, email);
                 cout << "Enter contact address: ";
-                cin >> address;
+                getline(cin, address);
                 Contact h(name, number, email, address);
                 myContacts.insert(h);
+                if (!myContacts.isValidSize()) {
+                 cout << "Error:: invalid list size" << endl;
+                }
                 break;
             }
             case 2: {
                 cout << "Enter contact name to search: ";
-                cin >> name;
+                getline(cin, name);
                 myContacts.Search(cout, name);
                 break;
             }
@@ -330,19 +352,22 @@ int main() {
             }
             case 4: {
                 cout << "Enter contact name to display information: ";
-                cin >> name;
+                getline(cin, name);
                 myContacts.Search(cout, name);
                 break;
             }
             case 5: {
                 cout << "Enter contact name to delete: ";
-                cin >> name;
+                getline(cin, name);
                 myContacts.deleteContact1(cout, name);
+                 if (!myContacts.isValidSize()) {
+                 cout << "Error:: invalid list size" << endl;
+                }
                 break;
             }
             case 6: {
                 cout << "Enter contact name to edit: ";
-                cin >> name;
+                getline(cin, name);
                 myContacts.editContact1(cout, name);
                 break;
             }
