@@ -246,6 +246,42 @@ void ContactList:: editContact (ostream& output, link root, string name)
         }
     }
     }
+bool ContactList::isValidPhoneNumber(string phoneNumber) {
+    // Check if the phone number starts with "+20" 
+    if (phoneNumber.substr(0, 3) == "+20") {
+        // Check if it's a landline number (2 for area code + 8 for local number = 10 + 3 for country code = 13 total)
+        if (phoneNumber.length() == 13) {
+            return true;
+        }
+        // Check if it's a mobile number (10 for the number + 3 for country code = 13 total)
+        else if (phoneNumber.length() == 14) {
+            return true;
+        }
+        // If it's neither a landline nor a mobile number, it's invalid
+        else {
+            return false;
+        }
+    }
+    // Check if the phone number starts with "01" and has a length of 11
+    else if (phoneNumber.substr(0, 2) == "01" && phoneNumber.length() == 11) {
+        // Add "+20" to the start of the phone number
+        phoneNumber = "+20" + phoneNumber;
+        return true;
+    }
+    // For non-Egyptian numbers, check if the number starts with "+" followed by 1 to 3 digits for the country code,
+    // and then 8 to 15 digits for the phone number
+    else if (phoneNumber[0] == '+' && phoneNumber.length() >= 9 && phoneNumber.length() <= 18) {
+        return true;
+    }
+    else if (phoneNumber[0] == '+' && phoneNumber[4] == ' ' && phoneNumber.length() >= 13 && phoneNumber.length() <= 20) {
+        return true;
+    }
+    // If none of the above checks pass, the phone number is invalid
+    else {
+        return false;
+    }
+}
+
 
 int main() {
     cout << "Hello, Welcome to Contact list" << endl;
@@ -270,6 +306,10 @@ int main() {
                 cin >> name;
                 cout << "Enter contact number: ";
                 cin >> number;
+                if(!myContacts.isValidPhoneNumber(number)){
+                    cout<<"wrong number format"<<endl;
+                    break;
+                }
                 cout << "Enter contact email: ";
                 cin >> email;
                 cout << "Enter contact address: ";
