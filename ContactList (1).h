@@ -20,8 +20,8 @@ public:
     void setPhoneNum   (string phoneNumber);
     void setEmail (string email);
     void setAddress (string address);
+    bool isValidEmail(const std::string& email);
     Contact(const Contact& other);
-
 private:
     string name;
     string phoneNum;
@@ -57,6 +57,8 @@ public:
     void editContact1(ostream& output, string name);
     void displayContact(link current);
     void deleteContact1(ostream& output, string name);
+
+
 private:
     link root;      // pointer to root of tree
     int insertSize; // list size
