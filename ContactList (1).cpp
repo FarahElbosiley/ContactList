@@ -1,6 +1,7 @@
 #include <string>
 #include "ContactList.h"
 #include <iostream>
+#include <regex>
 using namespace std;
 
 Contact::Contact (){ }
@@ -44,6 +45,12 @@ void Contact::setPhoneNum (string phoneNumber)
 }
 void Contact::setEmail (string email)
 {
+    if(!(isValidEmail(email))){
+        cout<<"InValid Input"<<endl<<"please enter Email:"<<endl;
+        string i;
+        cin>>i;
+        setEmail(i);
+}
     this->email = email;
 }
 void Contact::setAddress (string address)
@@ -74,7 +81,10 @@ int ContactList::display(ostream& output)
     return insertSize;
 }
 
-
+bool Contact::isValidEmail(const std::string& email) {
+    std::regex pattern("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$");
+    return std::regex_match(email, pattern);
+}
 void ContactList::inOrder(link current, ostream& output)
 {
     if(current != NULL)
@@ -175,7 +185,7 @@ void ContactList::deleteContact1(ostream& output, string name) {
 void ContactList::deleteContact(ostream& output, link& root, string xname)
 {
     if(root == NULL){
-        output << "Contact not found!";
+        output << "Contact not found!"<<endl;
         return;
     }
     else if(xname < root->data.getName()){
@@ -216,14 +226,17 @@ void ContactList:: editContact (ostream& output, link root, string name)
      else{
      string data;
      int choice;
-     output<<"Select Option to eddit 1 for name 2 for email and 3 for address and 4 for number:";
+     output<<"Select Option to edit 1 for name 2 for email and 3 for address and 4 for number:";
      cin>>choice;
-    output<<"enter data to modify";
+    output<<"enter data to modify: ";
     cin>>data;
 
     switch(choice){
     case 1:{
-    ptr->data.setName(data);
+    ContactList myContacts;
+    Contact h(data, ptr->data.getPhoneNum(),ptr->data.getEmail(),ptr->data.getAddress());
+    myContacts.insert(h);
+    deleteContact(output,ptr,ptr->data.getName());
     break;
     }
     case 2:{
@@ -236,11 +249,12 @@ void ContactList:: editContact (ostream& output, link root, string name)
         ptr->data.setPhoneNum(data);
     break;
         }
-        default: {
-            output<<"error";
-            return;
+    default: {
+        output<<"error";
+        return;
         }
-    }}
+    }
+    }
     }
 
 int main() {
@@ -258,8 +272,7 @@ int main() {
         cout << "5. Delete contact\n";
         cout << "6. Edit contact information\n";
         cout << "7. Exit\n";
-        cin >> choice;
-
+        cin>>choice;
         switch (choice) {
             case 1: {
                 cout << "Enter contact name: ";
