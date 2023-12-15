@@ -32,11 +32,6 @@ int main(){
                 getline(cin, name);
                 cout << "Enter contact number: ";
                 getline(cin, number);
-                if(!myContacts.isValidPhoneNumber(number)){
-                    cout<<"wrong number format"<<endl;
-                    break;
-                }
-               
                 cout << "Enter contact email: ";
                 getline(cin, email);
                 cout << "Enter contact address: ";
