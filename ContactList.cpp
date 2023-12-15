@@ -144,7 +144,7 @@ void ContactList::inOrder(link current, ostream& output)
 }
 
 int ContactList::insert(Contact newContact) {
-    if(!isValidSize(root)){
+    if(!isValidSize()){
         cout<<"The list is full"<<endl;
         return 0;
     }
@@ -282,7 +282,8 @@ void ContactList::editContact1(ostream& output, string name) {
 
 void ContactList:: editContact (ostream& output, link root, string name)
 {
-     link ptr=find_name_InTree( output, root, name);
+     regex x(name);
+     link ptr=find_name_InTree( output, root, x);
      if (ptr==NULL)
      return;
      else{
