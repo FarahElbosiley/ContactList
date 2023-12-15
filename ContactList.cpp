@@ -1,11 +1,7 @@
-// Online C++ compiler to run C++ program online
-#include <iostream>
-
-int main() {
-    // Write C++ code here
-    std:#include <string>
+#include <string>
 #include "ContactList.h"
 #include <iostream>
+#include <regex>
 using namespace std;
 
 Contact::Contact (){ }
@@ -45,12 +41,27 @@ void Contact::setName  (string name)
 }
 void Contact::setPhoneNum (string phoneNumber)
 {
-    this->phoneNum = phoneNumber;
+     if(!(isValidPhoneNumber(phoneNumber))){
+         cout<<"wrong number format"<<endl<<"Enter contact Number:"<<endl;
+         string n;
+         getline(cin,n);
+         setPhoneNum(n);}
+    else
+        this->phoneNum = phoneNumber;
 }
+
 void Contact::setEmail (string email)
 {
-    this->email = email;
+    if(!(isValidEmail(email))){
+        cout<<"InValid Input"<<endl<<"please enter Email:"<<endl;
+        string i;
+        getline(cin, i);
+        setEmail(i);
+    }
+    else
+        this->email = email;
 }
+
 void Contact::setAddress (string address)
 {
     this->address = address;
@@ -61,6 +72,7 @@ ContactList::ContactList() {
     root = nullptr;
     insertSize = 0;
     count = 0;
+    MaxSize = 1024;
 }
 ContactList::~ContactList() {
     deleteTree(root);
@@ -79,6 +91,10 @@ int ContactList::display(ostream& output)
     return insertSize;
 }
 
+bool Contact::isValidEmail(const std::string& email) {
+    std::regex pattern("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$");
+    return std::regex_match(email, pattern);
+}
 
 void ContactList::inOrder(link current, ostream& output)
 {
@@ -90,9 +106,11 @@ void ContactList::inOrder(link current, ostream& output)
     }
 }
 
-
-
 int ContactList::insert(Contact newContact) {
+    if(!isValidSize(root)){
+        cout<<"The list is full"<<endl;
+        return 0;
+    }
     link newNode = new Node(newContact);
     if (newNode == NULL) { // Check if new node is created successfully
         return -1; // Return -1 to indicate error
@@ -132,16 +150,34 @@ int ContactList::insert(Contact newContact) {
 
 
 
-bool ContactList::Search(ostream& output, string name) {
-    link foundNode = find_name_InTree(output,root, name);
+bool ContactList::Search(ostream& output, string pattern) {
+    regex r(pattern);
+    link foundNode = find_name_InTree(output, root, r);
     if (foundNode == NULL) {
         output << "Contact not found." << endl;
-        return false;
-         // Contact not found
+        return false;  // Contact not found
     } else {
-          displayContact(foundNode);
-        return true; // Contact found
-        }}
+        displayContact(foundNode);
+        return true;  // Contact found
+    }
+}
+
+link ContactList::find_name_InTree(ostream& output, link current, regex& r) {
+    if (current == NULL) {
+        return NULL;
+    }
+    else if (regex_match(current->data.getName(), r)) {
+        return current;
+    }
+    else {
+        link foundNode = find_name_InTree(output, current->left, r);
+        if (foundNode != NULL) {
+            return foundNode;
+        }
+        return find_name_InTree(output, current->right, r);
+    }
+}
+
 
 void ContactList::displayContact(link current){
         cout << "The contact is found: " << endl;
@@ -149,32 +185,8 @@ void ContactList::displayContact(link current){
         cout<< "Telephone number: " << current->data.getPhoneNum() <<"    "<< "Email: " << current->data.getEmail()<< endl;
 }
 
-link ContactList::find_name_InTree(ostream& output, link current, string name)
-{
-    if (current == NULL) {
-        return NULL;
-    }
-    else if (current -> data.getName() == name){
-        return current;
-    }
-    else {
-        string name_Record;
-        name_Record=current->data.getName();
-
-        if (name < name_Record) {
-            return find_name_InTree(output, current->left, name);
-        }
-        else if (name > name_Record) {
-            return find_name_InTree(output, current->right, name);
-        }
-        else{
-
-                return NULL;
-            }
-    }
-}
 bool ContactList::isValidSize() {
-    return insertSize == countNodes(root);
+    return insertSize < MaxSize;
 }
 int ContactList::countNodes(link node) {
     if (node == NULL) {
@@ -234,16 +246,22 @@ void ContactList::editContact1(ostream& output, string name) {
 void ContactList:: editContact (ostream& output, link root, string name)
 {
      link ptr=find_name_InTree( output, root, name);
+     if (ptr==NULL)
+     return;
+     else{
      string data;
      int choice;
-     output<<"Select Option to eddit 1 for name 2 for email and 3 for address and 4 for number:";
+     output<<"Select Option to edit 1 for name 2 for email and 3 for address and 4 for number:";
      cin>>choice;
-    output<<"enter data to modify";
+    output<<"enter data to modify: ";
     cin>>data;
 
     switch(choice){
     case 1:{
-    ptr->data.setName(data);
+    ContactList myContacts;
+    Contact h(data, ptr->data.getPhoneNum(),ptr->data.getEmail(),ptr->data.getAddress());
+    myContacts.insert(h);
+    deleteContact(output,ptr,ptr->data.getName());
     break;
     }
     case 2:{
@@ -256,14 +274,14 @@ void ContactList:: editContact (ostream& output, link root, string name)
         ptr->data.setPhoneNum(data);
     break;
         }
-        default: {
-            output<<"error";
-            return;
+    default: {
+        output<<"error";
+        return;
         }
     }
     }
-    
-    
+    }
+
 bool ContactList::isValidPhoneNumber(string phoneNumber) {
     // Check if the phone number starts with "+20" 
     if (phoneNumber.substr(0, 3) == "+20") {
@@ -298,86 +316,4 @@ bool ContactList::isValidPhoneNumber(string phoneNumber) {
     else {
         return false;
     }
-}
-
-
-int main() {
-    cout << "Hello, Welcome to Contact list" << endl;
-    ContactList myContacts;
-    string name, number, email, address;
-    int choice;
-
-    while (true) {
-        cout << "Please choose an operation:\n";
-        cout << "1. Insert new contact\n";
-        cout << "2. Search for contact by name\n";
-        cout << "3. Display contactList\n";
-        cout << "4. Display information of contact\n";
-        cout << "5. Delete contact\n";
-        cout << "6. Edit contact information\n";
-        cout << "7. Exit\n";
-        cin >> choice;
-        cin.ignore();
-
-        switch (choice) {
-            case 1: {
-                cout << "Enter contact name: ";
-                getline(cin, name);
-                cout << "Enter contact number: ";
-                getline(cin, number);
-                if(!myContacts.isValidPhoneNumber(number)){
-                    cout<<"wrong number format"<<endl;
-                    break;
-                }
-                cout << "Enter contact email: ";
-                getline(cin, email);
-                cout << "Enter contact address: ";
-                getline(cin, address);
-                Contact h(name, number, email, address);
-                myContacts.insert(h);
-                if (!myContacts.isValidSize()) {
-                 cout << "Error:: invalid list size" << endl;
-                }
-                break;
-            }
-            case 2: {
-                cout << "Enter contact name to search: ";
-                getline(cin, name);
-                myContacts.Search(cout, name);
-                break;
-            }
-            case 3: {
-                myContacts.display(cout);
-                break;
-            }
-            case 4: {
-                cout << "Enter contact name to display information: ";
-                getline(cin, name);
-                myContacts.Search(cout, name);
-                break;
-            }
-            case 5: {
-                cout << "Enter contact name to delete: ";
-                getline(cin, name);
-                myContacts.deleteContact1(cout, name);
-                 if (!myContacts.isValidSize()) {
-                 cout << "Error:: invalid list size" << endl;
-                }
-                break;
-            }
-            case 6: {
-                cout << "Enter contact name to edit: ";
-                getline(cin, name);
-                myContacts.editContact1(cout, name);
-                break;
-            }
-            case 7:
-                return 0;
-
-            default:
-                cout << "Invalid choice. Please try again.\n";
-        }
-    }
-
-    return 0;
 }
