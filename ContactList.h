@@ -65,6 +65,7 @@ public:
 
 private:
     link root;      // pointer to root of tree
+    int MaxSize;    // Max list size
     int insertSize; // list size
     int count;      // general count used for find and delete
 };
