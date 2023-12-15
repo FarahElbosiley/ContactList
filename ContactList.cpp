@@ -67,9 +67,9 @@ void Contact::setAddress (string address)
     this->address = address;
 }
 
-bool Contact::isValidEmail(const std::string& email) {
-    std::regex pattern("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$");
-    return std::regex_match(email, pattern);
+bool Contact::isValidEmail(const string& email) {
+    regex pattern("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$");
+    return regex_match(email, pattern);
 }
 
 bool Contact::isValidPhoneNumber(string phoneNumber) {
