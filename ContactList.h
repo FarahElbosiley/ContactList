@@ -3,6 +3,7 @@
 #ifndef NODE_H
 #define NODE_H
 
+#include <regex>
 #include <string>
 #include <iostream>
 using namespace std;
