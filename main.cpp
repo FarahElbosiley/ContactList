@@ -8,6 +8,7 @@
 #include <QMessageBox>
 #include <QCoreApplication>
 #include <QFile>
+#include <QTextStream>
 #include <QDataStream>  // Required for binary data operations
 class ContactBookWidget : public QWidget {
     Q_OBJECT
@@ -28,6 +29,7 @@ private:
     QString contactsFilePath;
 
 public:
+
     ContactBookWidget(QWidget* parent = nullptr) : QWidget(parent), editIndex(-1) {
         QVBoxLayout* layout = new QVBoxLayout(this);
         QLabel* nameLabel = new QLabel("Name:");
@@ -87,7 +89,17 @@ public slots:
         QString newNumber = numberLineEdit->text();
         QString newEmail = emailLineEdit->text();
         QString newAddress = addressLineEdit->text();
-
+        QFile file("Contacts.txt");
+        if(!file.open(QFile::WriteOnly | QFile::Text))
+        {MassageBox::warning(this,"title","file not open");
+        }
+        QTextStream out(&file);
+        out<< newName;
+        out<< newNumber;
+        out<< newEmail;
+        out<< newAddress;
+        file.flush();
+        file.close();
         // Check for duplicates
         bool duplicate = false;
         for (int i = 0; i < contactList->count(); ++i) {
@@ -111,7 +123,6 @@ public slots:
             QString contact = newName;
             QListWidgetItem* newItem = new QListWidgetItem(contact);
             contactList->addItem(newItem);
-
             // Clear input fields
             nameLineEdit->clear();
             numberLineEdit->clear();
