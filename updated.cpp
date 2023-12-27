@@ -248,7 +248,7 @@ vector<ContactFileData> getAllContacts(const string& fileName) {
     vector<ContactFileData> contactsVector;
 
     if (!file.is_open()) {
-        cerr << "Error opening file for reading." << endl;
+        cerr << "Empty Contact List." << endl;
         return contactsVector;
     }
 
