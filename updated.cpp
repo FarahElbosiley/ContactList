@@ -11,12 +11,11 @@ Contact::Contact (){ }
 
 Contact::Contact (string name, string phoneNum, string email, string address)
 {
-    this->name = name;
-    this->phoneNum = phoneNum;
-    this->email = email;
-    this->address = address;
+    setName(name);
+    setEmail(email);
+    setPhoneNum(phoneNum);
+    setAddress(address);
 }
-
 Contact::Contact(const Contact& other)
     : name(other.name), phoneNum(other.phoneNum), email(other.email), address(other.address) {}
 
