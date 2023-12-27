@@ -161,3 +161,22 @@ protected:
             event->accept();  // Accept the close event if data is already saved
         }
     }
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+#include <QCloseEvent>
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    QMessageBox::StandardButton resBtn = QMessageBox::question(this, "APP_NAME",
+        tr("Are you sure?\\n"),
+        QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
+        QMessageBox::Yes);
+    if (resBtn != QMessageBox::Yes) {
+        event->ignore();
+    } else {
+        event->accept();
+    }
+}
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+QPushButton *yourButton = new QPushButton(this);
+connect(yourButton, &QPushButton::clicked, this, &QWidget::close);
