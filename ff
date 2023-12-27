@@ -1,31 +1,40 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
+#include <QDebug>
 
-#include <QCloseEvent>
-#include <QMainWindow>
-
-QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
-QT_END_NAMESPACE
-
-class MainWindow : public QMainWindow
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow)
 {
-    Q_OBJECT
+    ui->setupUi(this);
+}
 
-public:
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
 
-protected:
-    void closeEvent(QCloseEvent *event) override;
+void MainWindow::on_treeView_collapsed(const QModelIndex &index)
+{
+    // Your slot implementation here
+}
 
-private slots:
-    void on_treeView_collapsed(const QModelIndex &index);
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    qDebug() << "Custom close event handling";
 
-private:
-    Ui::MainWindow *ui;
+    // Call your custom function here
+    myCustomFunction();
 
-    void myCustomFunction();
-};
+    // You can decide whether to accept or ignore the close event
+    // For example, uncomment the line below to accept the close event
+    // event->accept();
 
-#endif // MAINWINDOW_H
+    // The default implementation of QMainWindow::closeEvent() accepts the close event
+    QMainWindow::closeEvent(event);
+}
+
+void MainWindow::myCustomFunction()
+{
+    // Your custom function logic here
+    qDebug() << "Custom function called on close event";
+}
