@@ -148,4 +148,102 @@ void MainWindow::closeEvent(QCloseEvent *event)
         event->accept();
     }
 }
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+                                        NEW UPDATE 
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+#include <QApplication>
+#include <QWidget>
+#include <QTextEdit>
+#include <QVBoxLayout>
+#include <QPushButton>
+#include <QMessageBox>
+#include <QFile>
+#include <QTextStream>
 
+class MyMainWindow : public QWidget {
+    Q_OBJECT
+
+public:
+    MyMainWindow(QWidget *parent = nullptr) : QWidget(parent) {
+        setupUI();
+        loadDataFromFile();
+    }
+
+protected:
+    void closeEvent(QCloseEvent *event) override {
+        if (isDataModified()) {
+            int answer = QMessageBox::question(this, "Unsaved Changes",
+                                               "There are unsaved changes. Do you want to save before closing?",
+                                               QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+
+            if (answer == QMessageBox::Save) {
+                saveDataToFile();
+            } else if (answer == QMessageBox::Cancel) {
+                event->ignore();  // Ignore the close event
+                return;
+            }
+        }
+
+        event->accept();  // Allow the close event
+    }
+
+private slots:
+    void saveAndClearData() {
+        saveDataToFile();
+        textEdit->clear();
+    }
+
+private:
+    void setupUI() {
+        QVBoxLayout *layout = new QVBoxLayout(this);
+
+        textEdit = new QTextEdit(this);
+        layout->addWidget(textEdit);
+
+        QPushButton *saveAndClearButton = new QPushButton("Save and Clear", this);
+        connect(saveAndClearButton, &QPushButton::clicked, this, &MyMainWindow::saveAndClearData);
+        layout->addWidget(saveAndClearButton);
+
+        setLayout(layout);
+        setWindowTitle("Qt Creator GUI");
+    }
+
+    void loadDataFromFile() {
+        QFile file("data.txt");
+        if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QTextStream in(&file);
+            QString data = in.readAll();
+            file.close();
+            textEdit->setPlainText(data);
+            originalData = data;
+        }
+    }
+
+    void saveDataToFile() {
+        QFile file("data.txt");
+        if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            QTextStream out(&file);
+            out << textEdit->toPlainText();
+            file.close();
+            originalData = textEdit->toPlainText();
+        }
+    }
+
+    bool isDataModified() const {
+        return textEdit->toPlainText() != originalData;
+    }
+
+    QTextEdit *textEdit;
+    QString originalData;
+};
+
+int main(int argc, char *argv[]) {
+    QApplication app(argc, argv);
+
+    MyMainWindow mainWindow;
+    mainWindow.show();
+
+    return app.exec();
+}
+
+#include "main.moc"
