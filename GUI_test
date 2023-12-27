@@ -1,118 +1,53 @@
-#include <QApplication>
-#include <QWidget>
-#include <QVBoxLayout>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QLabel>
-#include <QListWidget>
-#include <QMessageBox>
-#include <QCoreApplication>
-#include "ContactList.h"  // Include your existing ContactList class
-#include <iostream>
-
-class ContactBookWidget : public QWidget {
-    Q_OBJECT
-
+// Add these declarations in your class definition in the header file (mainwindow.h)
 private:
-    QListWidget* contactList;
-    QLineEdit* nameLineEdit;
-    QLineEdit* numberLineEdit;
-    QLineEdit* emailLineEdit;
-    QLineEdit* addressLineEdit;
-    QPushButton* addButton;
-    QPushButton* deleteButton;
-    QPushButton* editButton;
-    QPushButton* saveButton;
-    QPushButton* searchButton;
-    QLabel* editLabel;
-    ContactList contactListObj;  // Instance of ContactList
+    void saveData();
+    void performCleanup();
 
-public:
-    ContactBookWidget(QWidget* parent = nullptr) : QWidget(parent) {
-        QVBoxLayout* layout = new QVBoxLayout(this);
+// ...
 
-        // ... (existing code)
+// Add these definitions in your mainwindow.cpp file
 
-        // Connect GUI signals to ContactList slots
-        connect(addButton, SIGNAL(clicked()), this, SLOT(addContact()));
-        connect(deleteButton, SIGNAL(clicked()), this, SLOT(deleteContact()));
-        connect(editButton, SIGNAL(clicked()), this, SLOT(editContact()));
-        connect(saveButton, SIGNAL(clicked()), this, SLOT(saveEditedContact()));
-        connect(searchButton, SIGNAL(clicked()), this, SLOT(searchContact()));
+void MainWindow::saveData()
+{
+    clearFile("contacts.txt");
+
+    ofstream file("contacts.txt");
+    for (const auto& contact : myContacts.BSTtoVector()) {
+        file << contact.name << " " << contact.phoneNumber << " " << contact.email << " " << contact.address << endl;
     }
 
-public slots:
-    void addContact() {
-        // Add contact to ContactList
-        Contact newContact(nameLineEdit->text().toStdString(),
-                           numberLineEdit->text().toStdString(),
-                           emailLineEdit->text().toStdString(),
-                           addressLineEdit->text().toStdString());
-        int result = contactListObj.insert(newContact);
-        if (result == 0) {
-            QMessageBox::warning(this, "Duplicate Contact", "A contact with the same name already exists in the ContactList.");
-        }
-
-        // Update the GUI if necessary
-        updateContactList();
-    }
-
-    void deleteContact() {
-        // Delete contact from ContactList
-        QListWidgetItem* selectedItem = contactList->currentItem();
-        if (selectedItem) {
-            std::string contactName = selectedItem->text().toStdString();
-            contactListObj.deleteContact1(std::cout, contactName);
-
-            // Update the GUI if necessary
-            updateContactList();
-        }
-    }
-
-    void editContact() {
-        // Edit contact in ContactList
-        QListWidgetItem* selectedItem = contactList->currentItem();
-        if (selectedItem) {
-            std::string contactName = selectedItem->text().toStdString();
-            contactListObj.editContact1(std::cout, contactName);
-
-            // Update the GUI if necessary
-            updateContactList();
-        }
-    }
-
-    void saveEditedContact() {
-        // Save edited contact in ContactList
-
-        // Update the GUI if necessary
-        updateContactList();
-    }
-
-    void searchContact() {
-        // Search for contacts in ContactList
-        // Update the GUI if necessary
-        updateContactList();
-    }
-
-private:
-    void updateContactList() {
-        // Clear and reload the contactList from ContactList
-        contactList->clear();
-        contactListObj.display(std::cout, contactList);
-    }
-};
-
-int main(int argc, char* argv[]) {
-    QApplication app(argc, argv);
-
-    ContactBookWidget contactBookWidget;
-    contactBookWidget.show();
-
-    return app.exec();
+    file.close();
+    cout << "Contacts saved to file successfully." << endl;
 }
 
-#include "main.moc"
+void MainWindow::performCleanup()
+{
+    // Add any additional cleanup operations you may need here
+}
 
+// ...
+
+// Modify the closeEvent function to call these functions
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Close Confirmation",
+        tr("Do you want to save your work before exiting?"),
+        QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
+        QMessageBox::Yes);
+
+    if (resBtn != QMessageBox::Yes) {
+        event->ignore();  // Ignore the close event
+    } else {
+        // Save your work here.
+        saveData();
+
+        // Perform cleanup operations.
+        performCleanup();
+
+        // Accept the close event
+        event->accept();
+    }
+}
 
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 class ContactBookWidget : public QWidget {
