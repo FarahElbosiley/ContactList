@@ -112,3 +112,52 @@ int main(int argc, char* argv[]) {
 }
 
 #include "main.moc"
+
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+class ContactBookWidget : public QWidget {
+    Q_OBJECT
+
+private:
+    QListWidget* contactList;
+    QLineEdit* nameLineEdit;
+    QLineEdit* numberLineEdit;
+    QLineEdit* emailLineEdit;
+    QLineEdit* addressLineEdit;
+    QPushButton* addButton;
+    QPushButton* deleteButton;
+    QPushButton* editButton;
+    QPushButton* saveButton;
+    QPushButton* searchButton;
+    QLabel* editLabel;
+    QString contactsFilePath;
+    bool dataSaved;  // New member to track whether data is saved or not
+
+public:
+    ContactBookWidget(QWidget* parent = nullptr) : QWidget(parent), dataSaved(true) {
+        // Existing constructor code...
+
+        // New connection for the close button
+        connect(this, SIGNAL(closeEvent(QCloseEvent*)), this, SLOT(closeEvent(QCloseEvent*)));
+    }
+
+protected:
+    void closeEvent(QCloseEvent* event) override {
+        if (!dataSaved) {
+            QMessageBox::StandardButton reply;
+            reply = QMessageBox::question(this, "Unsaved Changes",
+                                          "There are unsaved changes. Do you want to save before closing?",
+                                          QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+
+            if (reply == QMessageBox::Yes) {
+                saveData();
+                event->accept();  // Accept the close event after saving
+            } else if (reply == QMessageBox::No) {
+                event->accept();  // Accept the close event without saving
+            } else {
+                event->ignore();  // Ignore the close event if Cancel is chosen
+            }
+        } else {
+            event->accept();  // Accept the close event if data is already saved
+        }
+    }
