@@ -180,3 +180,37 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 QPushButton *yourButton = new QPushButton(this);
 connect(yourButton, &QPushButton::clicked, this, &QWidget::close);
+
+
+
+
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+#include <QCloseEvent>
+#include <QMessageBox>
+#include <fstream>
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Close Confirmation",
+        tr("Do you want to save your work before exiting?"),
+        QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
+        QMessageBox::Yes);
+    if (resBtn != QMessageBox::Yes) {
+        event->ignore();
+    } else {
+        // Save your work here.
+        clearFile("contacts.txt");
+        ofstream file("contacts.txt");
+        for (const auto& contact : myContacts.BSTtoVector()) {
+            file << contact.name << " " << contact.phoneNumber << " " << contact.email << contact.address << endl;
+        }
+
+        file.close();
+        cout << "Contacts saved to file successfully." << endl;
+
+        event->accept();
+    }
+}
+
