@@ -1,0 +1,114 @@
+#include <QApplication>
+#include <QWidget>
+#include <QVBoxLayout>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QLabel>
+#include <QListWidget>
+#include <QMessageBox>
+#include <QCoreApplication>
+#include "ContactList.h"  // Include your existing ContactList class
+#include <iostream>
+
+class ContactBookWidget : public QWidget {
+    Q_OBJECT
+
+private:
+    QListWidget* contactList;
+    QLineEdit* nameLineEdit;
+    QLineEdit* numberLineEdit;
+    QLineEdit* emailLineEdit;
+    QLineEdit* addressLineEdit;
+    QPushButton* addButton;
+    QPushButton* deleteButton;
+    QPushButton* editButton;
+    QPushButton* saveButton;
+    QPushButton* searchButton;
+    QLabel* editLabel;
+    ContactList contactListObj;  // Instance of ContactList
+
+public:
+    ContactBookWidget(QWidget* parent = nullptr) : QWidget(parent) {
+        QVBoxLayout* layout = new QVBoxLayout(this);
+
+        // ... (existing code)
+
+        // Connect GUI signals to ContactList slots
+        connect(addButton, SIGNAL(clicked()), this, SLOT(addContact()));
+        connect(deleteButton, SIGNAL(clicked()), this, SLOT(deleteContact()));
+        connect(editButton, SIGNAL(clicked()), this, SLOT(editContact()));
+        connect(saveButton, SIGNAL(clicked()), this, SLOT(saveEditedContact()));
+        connect(searchButton, SIGNAL(clicked()), this, SLOT(searchContact()));
+    }
+
+public slots:
+    void addContact() {
+        // Add contact to ContactList
+        Contact newContact(nameLineEdit->text().toStdString(),
+                           numberLineEdit->text().toStdString(),
+                           emailLineEdit->text().toStdString(),
+                           addressLineEdit->text().toStdString());
+        int result = contactListObj.insert(newContact);
+        if (result == 0) {
+            QMessageBox::warning(this, "Duplicate Contact", "A contact with the same name already exists in the ContactList.");
+        }
+
+        // Update the GUI if necessary
+        updateContactList();
+    }
+
+    void deleteContact() {
+        // Delete contact from ContactList
+        QListWidgetItem* selectedItem = contactList->currentItem();
+        if (selectedItem) {
+            std::string contactName = selectedItem->text().toStdString();
+            contactListObj.deleteContact1(std::cout, contactName);
+
+            // Update the GUI if necessary
+            updateContactList();
+        }
+    }
+
+    void editContact() {
+        // Edit contact in ContactList
+        QListWidgetItem* selectedItem = contactList->currentItem();
+        if (selectedItem) {
+            std::string contactName = selectedItem->text().toStdString();
+            contactListObj.editContact1(std::cout, contactName);
+
+            // Update the GUI if necessary
+            updateContactList();
+        }
+    }
+
+    void saveEditedContact() {
+        // Save edited contact in ContactList
+
+        // Update the GUI if necessary
+        updateContactList();
+    }
+
+    void searchContact() {
+        // Search for contacts in ContactList
+        // Update the GUI if necessary
+        updateContactList();
+    }
+
+private:
+    void updateContactList() {
+        // Clear and reload the contactList from ContactList
+        contactList->clear();
+        contactListObj.display(std::cout, contactList);
+    }
+};
+
+int main(int argc, char* argv[]) {
+    QApplication app(argc, argv);
+
+    ContactBookWidget contactBookWidget;
+    contactBookWidget.show();
+
+    return app.exec();
+}
+
+#include "main.moc"
