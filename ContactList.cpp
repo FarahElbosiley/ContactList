@@ -1,19 +1,39 @@
+#include <QApplication>
+#include <QWidget>
+#include <QVBoxLayout>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QLabel>
+#include <QListWidget>
+#include <QMessageBox>
+#include <QCoreApplication>
+#include <QFile>
+#include <QTextStream>
+#include <QDataStream>
 #include <string>
 #include "ContactList.h"
 #include <iostream>
 #include <regex>
+#include <fstream>
+#include<vector>
+
 using namespace std;
+
+/*////////////////////////////////////////////
+
+     Class Contact
+
+//////////////////////////////////////////////*/
 
 Contact::Contact (){ }
 
 Contact::Contact (string name, string phoneNum, string email, string address)
 {
-    this->name = name;
-    this->phoneNum = phoneNum;
-    this->email = email;
-    this->address = address;
+    setName(name);
+    setEmail(email);
+    setPhoneNum(phoneNum);
+    setAddress(address);
 }
-
 Contact::Contact(const Contact& other)
     : name(other.name), phoneNum(other.phoneNum), email(other.email), address(other.address) {}
 
@@ -41,24 +61,11 @@ void Contact::setName  (string name)
 }
 void Contact::setPhoneNum (string phoneNumber)
 {
-     if(!(isValidPhoneNumber(phoneNumber))){
-         cout<<"wrong number format"<<endl<<"Enter contact Number:"<<endl;
-         string n;
-         getline(cin,n);
-         setPhoneNum(n);}
-    else
-        this->phoneNum = phoneNumber;
+       this->phoneNum = phoneNumber;
 }
 
 void Contact::setEmail (string email)
 {
-    if(!(isValidEmail(email))){
-        cout<<"InValid Input"<<endl<<"please enter Email:"<<endl;
-        string i;
-        getline(cin, i);
-        setEmail(i);
-    }
-    else
         this->email = email;
 }
 
@@ -67,48 +74,12 @@ void Contact::setAddress (string address)
     this->address = address;
 }
 
-bool Contact::isValidEmail(const string& email) {
-    regex pattern("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$");
-    return regex_match(email, pattern);
-}
+/*////////////////////////////////////////////
 
-bool Contact::isValidPhoneNumber(string phoneNumber) {
-    // Check if the phone number starts with "+20" 
-    if (phoneNumber.substr(0, 3) == "+20") {
-        // Check if it's a landline number (2 for area code + 8 for local number = 10 + 3 for country code = 13 total)
-        if (phoneNumber.length() == 13) {
-            return true;
-        }
-        // Check if it's a mobile number (10 for the number + 3 for country code = 13 total)
-        else if (phoneNumber.length() == 14) {
-            return true;
-        }
-        // If it's neither a landline nor a mobile number, it's invalid
-        else {
-            return false;
-        }
-    }
-    // Check if the phone number starts with "01" and has a length of 11
-    else if (phoneNumber.substr(0, 2) == "01" && phoneNumber.length() == 11) {
-        // Add "+20" to the start of the phone number
-        phoneNumber = "+20" + phoneNumber;
-        return true;
-    }
-    // For non-Egyptian numbers, check if the number starts with "+" followed by 1 to 3 digits for the country code,
-    // and then 8 to 15 digits for the phone number
-    else if (phoneNumber[0] == '+' && phoneNumber.length() >= 9 && phoneNumber.length() <= 18) {
-        return true;
-    }
-    else if (phoneNumber[0] == '+' && phoneNumber[4] == ' ' && phoneNumber.length() >= 13 && phoneNumber.length() <= 20) {
-        return true;
-    }
-    // If none of the above checks pass, the phone number is invalid
-    else {
-        return false;
-    }
-}
+     Class ContactList
 
-///////////////////////////////////////////////
+//////////////////////////////////////////////*/
+
 ContactList::ContactList() {
     root = nullptr;
     insertSize = 0;
@@ -126,12 +97,31 @@ void ContactList::deleteTree(link node) {
     }
 }
 
+link ContactList::getRoot(){
+    return root;
+}
+
 int ContactList::display(ostream& output)
 {
     inOrder(root, output);
     return insertSize;
 }
 
+void ContactList::inOrderTraversal(Node* root,vector<ContactFileData>& result) {
+    if (root == nullptr) {
+        return;
+    }
+    inOrderTraversal(root->left, result);
+    ContactFileData contactData;
+    contactData.name = root->data.getName();
+    contactData.phoneNumber = root->data.getPhoneNum();
+    contactData.email = root->data.getEmail();
+    contactData.address = root->data.getAddress();
+
+    result.push_back(contactData);
+
+    inOrderTraversal(root->right, result);
+}
 
 void ContactList::inOrder(link current, ostream& output)
 {
@@ -143,19 +133,24 @@ void ContactList::inOrder(link current, ostream& output)
     }
 }
 
+
 int ContactList::insert(Contact newContact) {
-    if(!isValidSize()){
-        cout<<"The list is full"<<endl;
+    if (!isValidSize()) {
+        cout << "The list is full" << endl;
         return 0;
     }
+
     link newNode = new Node(newContact);
-    if (newNode == NULL) { // Check if new node is created successfully
+    if (newNode == NULL) {
         return -1; // Return -1 to indicate error
     }
 
     // If the tree is empty, set the new node as the root
     if (root == NULL) {
         root = newNode;
+        clearFile();
+        saveNewData(root); // Save contact to file
+        insertSize++;
         return 1; // Return 1 to indicate success
     }
 
@@ -169,9 +164,9 @@ int ContactList::insert(Contact newContact) {
         } else if (newContact.getName() > current->data.getName()) {
             current = current->right;
         } else {
-            // If a contact with the same  name already exists, do not insert
+            // If a contact with the same name already exists, do not insert
             delete newNode;
-            return 0; // Return 0 to indicate that no new contact was inserted
+            return 0; // Return 0 to indicate that no new contact was inserteds
         }
     }
 
@@ -181,8 +176,10 @@ int ContactList::insert(Contact newContact) {
     } else {
         parent->right = newNode;
     }
-      insertSize++;
-    return 1; // Return 1 to indicate success
+    clearFile(); // clear text file
+    saveNewData(root); // Save contact to file
+    insertSize++;
+    return 1;
 }
 
 
@@ -191,10 +188,8 @@ bool ContactList::Search(ostream& output, string pattern) {
     regex r(pattern);
     link foundNode = find_name_InTree(output, root, r);
     if (foundNode == NULL) {
-        output << "Contact not found." << endl;
         return false;  // Contact not found
     } else {
-        displayContact(foundNode);
         return true;  // Contact found
     }
 }
@@ -215,11 +210,10 @@ link ContactList::find_name_InTree(ostream& output, link current, regex& r) {
     }
 }
 
-
 void ContactList::displayContact(link current){
-        cout << "The contact is found: " << endl;
-        cout << "Name: " << current->data.getName()<< endl;
-        cout<< "Telephone number: " << current->data.getPhoneNum() <<"    "<< "Email: " << current->data.getEmail()<< endl;
+    cout << "The contact is found: " << endl;
+    cout << "Name: " << current->data.getName()<< endl;
+    cout<< "Telephone number: " << current->data.getPhoneNum() <<"    "<< "Email: " << current->data.getEmail()<< endl;
 }
 
 bool ContactList::isValidSize() {
@@ -232,91 +226,92 @@ int ContactList::countNodes(link node) {
     return 1 + countNodes(node->left) + countNodes(node->right);
 }
 
-void ContactList::deleteContact1(ostream& output, string name) {
-    deleteContact(output, root, name);
-}
-
-link ContactList::deleteContact(ostream& output, link& root, string xname)
-{
-    if(root == NULL){
+link ContactList::deleteContact(ostream& output, link& root, const string&  xname) {
+    if (root == NULL) {
         output << "Contact not found!";
         return root;
-    }
-    else if(xname < root->data.getName()){
-        deleteContact(output, root->left, xname);
-    }
-    else if(xname > root->data.getName()){
-        deleteContact(output, root->right, xname);
-    }
-    else{
-        if(root->left == NULL){
-            link temp = root->right;
+    } else if (xname < root->data.getName()) {
+        root->left = deleteContact(output, root->left, xname);
+    } else if (xname > root->data.getName()) {
+        root->right = deleteContact(output, root->right, xname);
+    } else {
+        if (root->left == NULL && root->right == NULL) {
             delete root;
-            root = temp;
+            root = NULL;
+        } else if (root->left == NULL) {
+            link temp = root;
+            root = root->right;
+            delete temp;
+        } else if (root->right == NULL) {
+            link temp = root;
+            root = root->left;
+            delete temp;
+        } else {
+            link successor = root->right;
+            while (successor->left != NULL)
+                successor = successor->left;
+
+            root->data = successor->data;
+            root->right = deleteContact(output, root->right, successor->data.getName());
         }
-        else if(root->right == NULL){
-            link temp = root->left;
-            delete root;
-            root = temp;
-        }
-        else
-    {
-      link temp = root->right;
-
-      while (temp->left != NULL)
-        temp = temp->left;
-
-      root->data = temp->data;
-
-      root->right = deleteContact(output,root->right,temp->data.getName());
     }
-  }
-  insertSize--;
-  return root;
+    return root;
 }
 
-void ContactList::editContact1(ostream& output, string name) {
-
-    editContact(output, root, name);
+void ContactList::deleteContact1(ostream& output, const string& name) {
+    root= deleteContact(output, root, name);
+        // Update the text file after deleting the contact
+            clearFile();
+            saveNewData(root);
 }
 
-void ContactList:: editContact (ostream& output, link root, string name)
-{
-     regex x(name);
-     link ptr=find_name_InTree( output, root, x);
-     if (ptr==NULL)
-     return;
-     else{
-     string data;
-     int choice;
-     output<<"Select Option to edit 1 for name 2 for email and 3 for address and 4 for number:";
-     cin>>choice;
-    output<<"enter data to modify: ";
-    cin>>data;
+void ContactList::editContact1(ostream& output, string name, Contact newContact) {
 
-    switch(choice){
-    case 1:{
-    ContactList myContacts;
-    Contact h(data, ptr->data.getPhoneNum(),ptr->data.getEmail(),ptr->data.getAddress());
-    myContacts.insert(h);
-    deleteContact(output,ptr,ptr->data.getName());
-    break;
-    }
-    case 2:{
-    ptr->data.setEmail(data);
-    break;}
-    case 3:{
-        ptr->data.setAddress(data);
-    break;}
-    case 4:{
-        ptr->data.setPhoneNum(data);
-    break;
-        }
-    default: {
-        output<<"error";
+    editContact(output, root, name, newContact);
+}
+
+void ContactList:: editContact (ostream& output, link root, string name, Contact newContact){
+    regex x(name);
+    link ptr=find_name_InTree( output, root, x); // return pointer to the contact
+    if (ptr==NULL){
         return;
+    }
+    else{ // the contact is found
+            deleteContact(cout, root,name);
+            insert(newContact);
+            //deleteContact(output,ptr,ptr->data.getName());
+
+            return;
         }
+}
+
+
+void ContactList::clearFile() {
+    ofstream file("D:\\contacts.txt", std::ios::out | std::ios::trunc);
+    if (!file.is_open()) {
+        cerr << "Error clearing file." << std::endl;
     }
+    file.close();
+}
+
+
+
+void ContactList::saveNewData(link root, ofstream& file) {
+    if (root != NULL) {
+        saveNewData(root->left, file);
+        file << root->data.getName() << "-" << root->data.getPhoneNum() << "-" << root->data.getEmail() << "-" << root->data.getAddress() << endl;
+        saveNewData(root->right, file);
     }
+}
+
+void ContactList::saveNewData(link root) {
+    ofstream file("D:\\contacts.txt", std::ios::app);
+    if (file.is_open()) {
+        saveNewData(root, file);
+        file.close();
+    } else {
+        // Handle the case where the file couldn't be opened
+        cerr << "Unable to open the file." << std::endl;
     }
+}
 
