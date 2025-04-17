@@ -7,7 +7,12 @@
 #include <string>
 #include <iostream>
 using namespace std;
-
+struct ContactFileData {
+    string name;
+    string phoneNumber;
+    string email;
+    string address;
+};
 class Contact
 {
 public:
@@ -19,11 +24,11 @@ public:
     string getAddress();
     void setName  (string name);
     void setPhoneNum   (string phoneNumber);
-    bool isValidEmail( string* email);
     void setEmail (string email);
     void setAddress (string address);
-    bool isValidPhoneNumber(string phoneNumber);
+    // Copy Constructor
     Contact(const Contact& other);
+
 
 private:
     string name;
@@ -50,25 +55,35 @@ public:
     ContactList();
     ~ContactList();
     void deleteTree(link node);
+    link getRoot();
     int display(ostream& output);
     void inOrder(link current, ostream& output);
     int insert(Contact newContact);
-    link deleteContact(ostream& output,link &root, string xname);
+    link deleteContact(ostream& output,link &root, const string& xname);
     bool Search(ostream& output, string name);
     link find_name_InTree(ostream& output, link current, regex& r);
-    void editContact(ostream& output, link root, string name);
-    void editContact1(ostream& output, string name);
+    void editContact(ostream& output, link root, string name, Contact newContact);
+    void editContact1(ostream& output, string name, Contact newContact);
     void displayContact(link current);
-    void deleteContact1(ostream& output, string name);
+    void deleteContact1(ostream& output,const string& name);
     bool isValidSize();
     int countNodes(link node);
-    
+    void saveNewData(link root, ofstream& file);
+    void saveNewData(Node*root);
+    void inOrderTraversal(Node* root,vector<ContactFileData>& result);
+    void clearFile();
+
+
+
+
 
 private:
+
     link root;      // pointer to root of tree
     int MaxSize;    // Max list size
     int insertSize; // list size
-    int count;      // general count used for find and delete
+    int count;        // general count used for find and delete
+
 };
 
 #endif //NODE_H
